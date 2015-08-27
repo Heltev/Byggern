@@ -1,0 +1,197 @@
+
+gr13.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         0000011e  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .comment      00000030  00000000  00000000  00000172  2**0
+                  CONTENTS, READONLY
+  2 .debug_aranges 00000038  00000000  00000000  000001a2  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  3 .debug_info   000002dc  00000000  00000000  000001da  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_abbrev 0000015d  00000000  00000000  000004b6  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_line   000001b3  00000000  00000000  00000613  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_frame  00000054  00000000  00000000  000007c8  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_str    0000019f  00000000  00000000  0000081c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_loc    00000026  00000000  00000000  000009bb  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_ranges 00000028  00000000  00000000  000009e1  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 38 00 	jmp	0x70	; 0x70 <__ctors_end>
+   4:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+   8:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+   c:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  10:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  14:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  18:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  1c:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  20:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  24:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  28:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  2c:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  30:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  34:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  38:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  3c:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  40:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  44:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  48:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  4c:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  50:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  54:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  58:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  5c:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  60:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  64:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  68:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+  6c:	0c 94 42 00 	jmp	0x84	; 0x84 <__bad_interrupt>
+
+00000070 <__ctors_end>:
+  70:	11 24       	eor	r1, r1
+  72:	1f be       	out	0x3f, r1	; 63
+  74:	cf ef       	ldi	r28, 0xFF	; 255
+  76:	d4 e0       	ldi	r29, 0x04	; 4
+  78:	de bf       	out	0x3e, r29	; 62
+  7a:	cd bf       	out	0x3d, r28	; 61
+  7c:	0e 94 4f 00 	call	0x9e	; 0x9e <main>
+  80:	0c 94 8d 00 	jmp	0x11a	; 0x11a <_exit>
+
+00000084 <__bad_interrupt>:
+  84:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+00000088 <USART_Init>:
+}
+
+void USART_Init(unsigned int ubrr){
+	
+	/* Set baud rate */
+	UBRR0H = (unsigned char)(ubrr>>8);
+  88:	90 bd       	out	0x20, r25	; 32
+	UBRR0L = (unsigned char)ubrr;
+  8a:	89 b9       	out	0x09, r24	; 9
+	
+	/*Enable receiver and transmitter */
+	UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+  8c:	88 e1       	ldi	r24, 0x18	; 24
+  8e:	8a b9       	out	0x0a, r24	; 10
+	
+	/*Set frame format: 8data, 2stop bit */
+	UCSR0C = (1<<URSEL0)|(1<<USBS0)|(3<<UCSZ00);
+  90:	8e e8       	ldi	r24, 0x8E	; 142
+  92:	80 bd       	out	0x20, r24	; 32
+  94:	08 95       	ret
+
+00000096 <USART_Transmit>:
+}
+
+void USART_Transmit(unsigned char data){
+	while(!(UCSR0A & (1<<UDRE0)))
+  96:	5d 9b       	sbis	0x0b, 5	; 11
+  98:	fe cf       	rjmp	.-4      	; 0x96 <USART_Transmit>
+		;	
+	
+	UDR0=data;
+  9a:	8c b9       	out	0x0c, r24	; 12
+  9c:	08 95       	ret
+
+0000009e <main>:
+#define BAUD 9600
+#define MYUBRR FOSC/16/BAUD-1
+
+int main(void)
+{
+	DDRA |= (1<<DDA1);
+  9e:	d1 9a       	sbi	0x1a, 1	; 26
+	
+	
+	      
+	USART_Init(31);
+  a0:	8f e1       	ldi	r24, 0x1F	; 31
+  a2:	90 e0       	ldi	r25, 0x00	; 0
+  a4:	0e 94 44 00 	call	0x88	; 0x88 <USART_Init>
+    while(1)
+	
+    {
+		 PORTA |= (1<<PINA1);
+  a8:	d9 9a       	sbi	0x1b, 1	; 27
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  aa:	2f e3       	ldi	r18, 0x3F	; 63
+  ac:	8d e0       	ldi	r24, 0x0D	; 13
+  ae:	93 e0       	ldi	r25, 0x03	; 3
+  b0:	21 50       	subi	r18, 0x01	; 1
+  b2:	80 40       	sbci	r24, 0x00	; 0
+  b4:	90 40       	sbci	r25, 0x00	; 0
+  b6:	e1 f7       	brne	.-8      	; 0xb0 <main+0x12>
+  b8:	00 c0       	rjmp	.+0      	; 0xba <main+0x1c>
+  ba:	00 00       	nop
+		 _delay_ms(1000);
+		 PORTA &= ~(1<<PINA1);
+  bc:	d9 98       	cbi	0x1b, 1	; 27
+  be:	2f e3       	ldi	r18, 0x3F	; 63
+  c0:	8d e0       	ldi	r24, 0x0D	; 13
+  c2:	93 e0       	ldi	r25, 0x03	; 3
+  c4:	21 50       	subi	r18, 0x01	; 1
+  c6:	80 40       	sbci	r24, 0x00	; 0
+  c8:	90 40       	sbci	r25, 0x00	; 0
+  ca:	e1 f7       	brne	.-8      	; 0xc4 <main+0x26>
+  cc:	00 c0       	rjmp	.+0      	; 0xce <main+0x30>
+  ce:	00 00       	nop
+		 _delay_ms(1000);
+		 USART_Transmit('a');
+  d0:	81 e6       	ldi	r24, 0x61	; 97
+  d2:	90 e0       	ldi	r25, 0x00	; 0
+  d4:	0e 94 4b 00 	call	0x96	; 0x96 <USART_Transmit>
+		 USART_Transmit('b');
+  d8:	82 e6       	ldi	r24, 0x62	; 98
+  da:	90 e0       	ldi	r25, 0x00	; 0
+  dc:	0e 94 4b 00 	call	0x96	; 0x96 <USART_Transmit>
+		 USART_Transmit('p');
+  e0:	80 e7       	ldi	r24, 0x70	; 112
+  e2:	90 e0       	ldi	r25, 0x00	; 0
+  e4:	0e 94 4b 00 	call	0x96	; 0x96 <USART_Transmit>
+		 USART_Transmit('e');
+  e8:	85 e6       	ldi	r24, 0x65	; 101
+  ea:	90 e0       	ldi	r25, 0x00	; 0
+  ec:	0e 94 4b 00 	call	0x96	; 0x96 <USART_Transmit>
+		 USART_Transmit('n');
+  f0:	8e e6       	ldi	r24, 0x6E	; 110
+  f2:	90 e0       	ldi	r25, 0x00	; 0
+  f4:	0e 94 4b 00 	call	0x96	; 0x96 <USART_Transmit>
+		 USART_Transmit('i');
+  f8:	89 e6       	ldi	r24, 0x69	; 105
+  fa:	90 e0       	ldi	r25, 0x00	; 0
+  fc:	0e 94 4b 00 	call	0x96	; 0x96 <USART_Transmit>
+		 USART_Transmit('s');
+ 100:	83 e7       	ldi	r24, 0x73	; 115
+ 102:	90 e0       	ldi	r25, 0x00	; 0
+ 104:	0e 94 4b 00 	call	0x96	; 0x96 <USART_Transmit>
+		 USART_Transmit('2');
+ 108:	82 e3       	ldi	r24, 0x32	; 50
+ 10a:	90 e0       	ldi	r25, 0x00	; 0
+ 10c:	0e 94 4b 00 	call	0x96	; 0x96 <USART_Transmit>
+		 USART_Transmit('\n');
+ 110:	8a e0       	ldi	r24, 0x0A	; 10
+ 112:	90 e0       	ldi	r25, 0x00	; 0
+ 114:	0e 94 4b 00 	call	0x96	; 0x96 <USART_Transmit>
+ 118:	c7 cf       	rjmp	.-114    	; 0xa8 <main+0xa>
+
+0000011a <_exit>:
+ 11a:	f8 94       	cli
+
+0000011c <__stop_program>:
+ 11c:	ff cf       	rjmp	.-2      	; 0x11c <__stop_program>
